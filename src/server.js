@@ -6,6 +6,8 @@ import 'dotenv/config';
 
 import connectDatabase from './db/connectMongoDB.js';
 
+import { Note } from './models/note.js';
+
 const app = express();
 
 // Middleware
@@ -31,8 +33,9 @@ app.use(
 // Решта коду
 
 // Перший маршрут
-app.get('/notes', (req, res) => {
-  res.status(200).json({ message: 'Retrieved all notes' });
+app.get('/notes', async (req, res) => {
+  const notes = await Note.find();
+  res.status(200).json(notes);
 });
 
 // Конкретна нотатка за id
@@ -62,8 +65,6 @@ app.use((err, req, res, next) => {
 });
 
 await connectDatabase();
-
-console.log(process.env);
 
 // Використовуємо значення з .env або дефолтний порт 3000
 const PORT = Number(process.env.PORT) || 3000;
