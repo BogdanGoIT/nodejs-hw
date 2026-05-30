@@ -4,10 +4,11 @@ import cors from 'cors';
 import pino from 'pino-http';
 import 'dotenv/config';
 
-const app = express();
+import connectDatabase from './db/connectMongoDB.js';
 
-// Використовуємо значення з .env або дефолтний порт 3000
-const PORT = process.env.PORT ?? 3000;
+import { Note } from './models/note.js';
+
+const app = express();
 
 // Middleware
 app.use(express.json());
@@ -32,8 +33,9 @@ app.use(
 // Решта коду
 
 // Перший маршрут
-app.get('/notes', (req, res) => {
-  res.status(200).json({ message: 'Retrieved all notes' });
+app.get('/notes', async (req, res) => {
+  const notes = await Note.find();
+  res.status(200).json(notes);
 });
 
 // Конкретна нотатка за id
@@ -61,6 +63,11 @@ app.use((err, req, res, next) => {
     error: err.message,
   });
 });
+
+await connectDatabase();
+
+// Використовуємо значення з .env або дефолтний порт 3000
+const PORT = Number(process.env.PORT) || 3000;
 
 // Запуск сервера
 app.listen(PORT, () => {
