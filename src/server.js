@@ -4,10 +4,8 @@ import cors from 'cors';
 
 import 'dotenv/config';
 
-import connectDatabase from './db/connectMongoDB.js';
-
 import { logger } from './middleware/logger.js';
-
+import { connectMongoDB } from './db/connectMongoDB.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -31,7 +29,7 @@ app.use(notFoundHandler);
 // Error — якщо під час запиту виникла помилка
 app.use(errorHandler);
 
-await connectDatabase();
+await connectMongoDB();
 
 // Використовуємо значення з .env або дефолтний порт 3000
 const port = Number(process.env.PORT) || 3000;

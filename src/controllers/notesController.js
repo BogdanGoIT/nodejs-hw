@@ -43,7 +43,7 @@ export const deleteNote = async (req, res) => {
     throw createHttpError(404, 'Note not found');
   }
 
-  res.json(deleteNote);
+  res.status(200).json(deleteNote);
 };
 
 // оновлення існуючої нотатки за її ідентифікатором
@@ -60,5 +60,5 @@ export const updateNote = async (req, res) => {
     throw createHttpError(404, 'Note not found');
   }
 
-  res.json(updateNote);
+  res.status(200).json(updateNote);
 };
