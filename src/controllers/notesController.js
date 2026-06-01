@@ -23,3 +23,42 @@ export const getNoteById = async (req, res) => {
 
   res.status(200).json(note);
 };
+
+// створення нової нотатки
+export const createNote = async (req, res) => {
+  const note = await Note.create(req.body);
+  console.log(note);
+
+  res.status(201).json(note);
+};
+
+// видалення існуючої нотатки за її ідентифікатором
+export const deleteNote = async (req, res) => {
+  const { noteId } = req.params;
+  const deleteNote = await Note.findOneAndDelete({
+    _id: noteId,
+  });
+
+  if (!deleteNote) {
+    throw createHttpError(404, 'Note not found');
+  }
+
+  res.json(deleteNote);
+};
+
+// оновлення існуючої нотатки за її ідентифікатором
+export const updateNote = async (req, res) => {
+  const { noteId } = req.params;
+
+  const updateNote = await Note.findOneAndUpdate(
+    { _id: noteId }, // Шукаємо по id
+    req.body,
+    { returnDocument: 'after' }, // повертаємо оновлений документ
+  );
+
+  if (!updateNote) {
+    throw createHttpError(404, 'Note not found');
+  }
+
+  res.json(updateNote);
+};
