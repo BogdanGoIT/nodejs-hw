@@ -9,3 +9,11 @@ export const getAllNotesSchema = {
     search: Joi.string(),
   }),
 };
+
+export const createNoteSchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(1).required(),
+    content: Joi.string(),
+    tag: Joi.valid(...TAGS),
+  }),
+};
