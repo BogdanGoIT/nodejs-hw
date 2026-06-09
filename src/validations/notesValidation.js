@@ -8,7 +8,7 @@ export const noteIdValidator = (value, helpers) => {
 
 export const noteIdSchema = {
   [Segments.PARAMS]: Joi.object({
-    noteId: Joi.string().custom(noteIdValidator),
+    noteId: Joi.string().custom(noteIdValidator).required(),
   }),
 };
 
@@ -30,9 +30,12 @@ export const createNoteSchema = {
 };
 
 export const updateNoteSchema = {
+  [Segments.PARAMS]: Joi.object({
+    noteId: Joi.string().custom(noteIdValidator).required(),
+  }),
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1),
     content: Joi.string(),
-    tag: Joi.valid(...TAGS),
+    tag: Joi.string().valid(...TAGS),
   }).min(1),
 };
