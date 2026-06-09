@@ -35,7 +35,7 @@ export const getAllNotes = async (req, res) => {
 // Отримати одну нотатку за id
 export const getNoteById = async (req, res) => {
   const { noteId } = req.params;
-  const note = await Note.findById(noteId);
+  const note = await Note.findById(noteId); // throw new Error()
 
   if (!note) {
     throw createHttpError(404, 'Note not found');
@@ -77,7 +77,7 @@ export const updateNote = async (req, res) => {
   const updateNote = await Note.findOneAndUpdate(
     { _id: noteId }, // Шукаємо по id
     req.body,
-    { returnDocument: 'after' }, // повертаємо оновлений документ
+    { returnDocument: 'after', runValidators: true }, // повертаємо оновлений документ
   );
 
   if (!updateNote) {
