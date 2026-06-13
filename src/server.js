@@ -11,6 +11,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 import notesRouter from './routes/notesRoutes.js';
 import { errors } from 'celebrate';
+import authRouter from './routes/authRoutes.js';
 
 const app = express();
 
@@ -23,6 +24,8 @@ app.use(cors()); // 3. Дозвіл для запитів з інших доме
 
 // підключаємо групу маршрутів нотатки
 app.use(notesRouter);
+// підключаємо групу маршрутів авторизації
+app.use(authRouter);
 
 // 404 — якщо маршрут не знайдено
 app.use(notFoundHandler);
