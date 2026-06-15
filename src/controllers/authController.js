@@ -55,5 +55,23 @@ export const loginUser = async (req, res) => {
 };
 
 export const refreshUserSession = async (req, res) => {
-  console.log(req.cookies);
+  const { refreshToken, sessionId } = req.cookies;
+  const session = await Session.findOne({ _id: sessionId, refreshToken });
+  console.log(session);
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+
+  if (session.refreshTokenValidUntil < new Date()) {
+    throw createHttpError(401, 'Session token expired');
+  }
+
+  await Session.deleteOne({ userId: session.userId });
+
+  const newSession = await createSession(session.userId);
+  setSessionCookies(res, newSession);
+
+  res.status(200).json({
+    message: 'Session refreshed',
+  });
 };
