@@ -4,7 +4,11 @@ import {
   loginUserSchema,
   registerUserSchema,
 } from '../validations/authValidation.js';
-import { loginUser, registerUser } from '../controllers/authController.js';
+import {
+  loginUser,
+  refreshUserSession,
+  registerUser,
+} from '../controllers/authController.js';
 
 const authRouter = Router();
 
@@ -19,5 +23,7 @@ authRouter.post(
   celebrate(loginUserSchema, { abortEarly: false }),
   loginUser,
 );
+
+authRouter.post('/auth/refresh', refreshUserSession);
 
 export default authRouter;

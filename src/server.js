@@ -1,6 +1,7 @@
 // src/server.js
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import 'dotenv/config';
 
@@ -19,6 +20,7 @@ const app = express();
 app.use(logger); // 1. Логер першим — бачить усі запити
 app.use(express.json()); // 2. Парсинг JSON-тіла
 app.use(cors()); // 3. Дозвіл для запитів з інших доменів
+app.use(cookieParser());
 
 // ...тут ваші маршрути
 
