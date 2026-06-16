@@ -2,7 +2,7 @@ import createHttpError from 'http-errors';
 import User from '../models/user.js';
 import { Session } from '../models/session.js';
 
-const authenticate = async (req, res, next) => {
+export const authenticate = async (req, res, next) => {
   console.log(req.body);
   const { sessionId, accessToken } = req.cookies;
 
@@ -38,5 +38,3 @@ const authenticate = async (req, res, next) => {
   // 8. Передаємо управління далі
   next();
 };
-
-export default authenticate;
