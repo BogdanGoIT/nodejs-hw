@@ -57,17 +57,35 @@ export const loginUser = async (req, res) => {
 export const refreshUserSession = async (req, res) => {
   const { refreshToken, sessionId } = req.cookies;
 
-  const session = await Session.findOne({ _id: sessionId, refreshToken });
-  console.log(session);
+  if (!sessionId || !refreshToken) {
+    throw createHttpError(401, 'Missing session credentials');
+  }
+
+  // 1. Знаходимо поточну сесію за id сесії та рефреш токеном
+  const session = await Session.findOne({
+    _id: sessionId,
+    refreshToken,
+  });
+
+  // 2. Якщо такої сесії нема, повертаємо помилку
   if (!session) {
     throw createHttpError(401, 'Session not found');
   }
 
+  // 3. Якщо сесія існує, перевіряємо валідність рефреш токена
   if (session.refreshTokenValidUntil < new Date()) {
+    // Якщо термін дії рефреш токена вийшов,
+    // видаляємо сесію і повертаємо помилку
+    await session.deleteOne();
+    res.clearCookie('sessionId');
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
     throw createHttpError(401, 'Session token expired');
   }
 
-  await Session.deleteOne({ userId: session.userId });
+  // 4. Якщо всі перевірки пройшли добре, видаляємо поточну сесію
+  await session.deleteOne();
+  // await Session.deleteOne({ userId: session.userId });
 
   const newSession = await createSession(session.userId);
   setSessionCookies(res, newSession);
