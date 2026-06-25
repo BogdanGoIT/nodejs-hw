@@ -1,9 +1,11 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import createHttpError from 'http-errors';
 import User from '../models/user.js';
 import { createSession, setSessionCookies } from '../services/auth.js';
 import { Session } from '../models/session.js';
+import { sendMail } from '../utils/sendMail.js';
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
@@ -107,4 +109,45 @@ export const logoutUser = async (req, res) => {
   res.clearCookie('refreshToken');
 
   res.status(204).send();
+};
+
+export const requestResetEmail = async (req, res) => {
+  const { email } = req.body;
+
+  // Якщо користувача нема — навмисно повертаємо ту саму "успішну"
+  // відповідь без відправлення листа (anti user enumeration).
+  const user = await User.findOne({ email });
+  if (!user) {
+    res.status(200).json({
+      message: 'Password reset email sent successfully',
+    });
+  }
+
+  // Користувач є — генеруємо короткоживучий JWT і відправляємо лист
+  const resetToken = jwt.sign(
+    {
+      sub: user.id,
+      email,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '15m' },
+  );
+
+  try {
+    await sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: 'Reset your password',
+      html: `${process.env.FRONTEND_DOMAIN}${resetToken}`,
+    });
+  } catch {
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
+
+  res.status(200).json({
+    message: 'Password reset email sent successfully',
+  });
 };
