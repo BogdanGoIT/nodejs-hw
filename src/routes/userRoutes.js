@@ -3,9 +3,9 @@ import { authenticate } from '../middleware/authenticate.js';
 import { updateUserAvatar } from '../controllers/userController.js';
 import { upload } from '../middleware/multer.js';
 
-const userRoutes = Router();
+const userRouter = Router();
 
-userRoutes.patch(
+userRouter.patch(
   '/users/me/avatar',
   authenticate,
   // Додаємо після авторизації, але до контролера
@@ -13,4 +13,4 @@ userRoutes.patch(
   updateUserAvatar,
 );
 
-export default userRoutes;
+export default userRouter;

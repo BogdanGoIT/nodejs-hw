@@ -13,7 +13,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 import notesRouter from './routes/notesRoutes.js';
 import { errors } from 'celebrate';
 import authRouter from './routes/authRoutes.js';
-import userRoutes from './routes/userRoutes.js';
+import userRouter from './routes/userRoutes.js';
 
 const app = express();
 
@@ -30,7 +30,7 @@ app.use(notesRouter);
 // підключаємо групу маршрутів авторизації
 app.use(authRouter);
 // Додаємо раути користувача
-app.use(userRoutes);
+app.use(userRouter);
 
 // 404 — якщо маршрут не знайдено
 app.use(notFoundHandler);

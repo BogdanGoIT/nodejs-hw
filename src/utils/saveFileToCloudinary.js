@@ -20,12 +20,12 @@ export async function saveFileToCloudinary(buffer, userId) {
     ],
   };
 
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       options,
       (error, result) => {
         if (error) {
-          return rejected(error);
+          return reject(error);
         }
         resolve(result);
       },
